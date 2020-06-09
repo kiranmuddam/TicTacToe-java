@@ -1,0 +1,92 @@
+hyperskill_project:
+  id: 48
+  ide_files: https://stepik.org/media/attachments/lesson/209897/additional_files.json
+  is_template_based: false
+  use_ide: true
+stages:
+- id: 255
+  step: 5397
+- id: 256
+  step: 5398
+- id: 257
+  step: 5399
+- id: 258
+  step: 5400
+- id: 259
+  step: 5401
+topics:
+  0:
+  - title: Introduction to Java
+    theory_id: 3500
+  - title: Basic literals
+    theory_id: 3522
+  - title: Overview of the basic program
+    theory_id: 3521
+  - title: Printing data
+    theory_id: 3749
+  1:
+  - title: Types and variables
+    theory_id: 3518
+  - title: Primitive and reference types
+    theory_id: 5035
+  - title: Array
+    theory_id: 3511
+  - title: Comments
+    theory_id: 3520
+  - title: Naming variables
+    theory_id: 3513
+  - title: Scanning the input
+    theory_id: 9055
+  - title: Arithmetic operations
+    theory_id: 3519
+  - title: Integer types and operations
+    theory_id: 3565
+  - title: Increment and decrement
+    theory_id: 5008
+  - title: Characters
+    theory_id: 3514
+  - title: String
+    theory_id: 3523
+  2:
+  - title: IDE
+    theory_id: 3805
+  - title: Boolean and logical operations
+    theory_id: 3516
+  - title: Relational operators
+    theory_id: 3512
+  - title: Conditional statement
+    theory_id: 3503
+  - title: The for-loop
+    theory_id: 3505
+  - title: The while and do-while loops
+    theory_id: 3498
+  - title: Branching statements
+    theory_id: 3507
+  - title: Iterating over arrays
+    theory_id: 3602
+  - title: Multi-dimensional array
+    theory_id: 1933
+  - title: IntelliJ IDEA
+    theory_id: 3801
+  - title: IDEA Basics
+    theory_id: 5819
+  - title: EduTools
+    theory_id: 5839
+  3:
+  - title: Units of information
+    theory_id: 6865
+  - title: Binary numbers
+    theory_id: 5544
+  - title: Sizes and ranges
+    theory_id: 3532
+  - title: Type casting
+    theory_id: 3510
+  - title: Defining methods
+    theory_id: 3590
+  - title: Write, compile, and run
+    theory_id: 3739
+  - title: Errors in programs
+    theory_id: 3536
+  4:
+  - title: Switch statement
+    theory_id: 3504
