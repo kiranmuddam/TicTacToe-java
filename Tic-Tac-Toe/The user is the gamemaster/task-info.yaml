@@ -246,6 +246,17 @@ files:
         }
     }
   learner_created: false
+- name: src/tictactoe/Main.java
+  visible: true
+  text: |
+    package tictactoe;
+
+    public class Main {
+        public static void main(String[] args) {
+            System.out.println("X O X\n O X O\n X X O");
+        }
+    }
+  learner_created: true
 feedback_link: https://hyperskill.org/projects/48/stages/256/implement
-status: Unchecked
+status: Solved
 record: -1

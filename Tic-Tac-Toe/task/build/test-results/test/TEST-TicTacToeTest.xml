@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="TicTacToeTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2020-06-09T08:31:49" hostname="N3XuSPrIM3" time="0.346">
+  <properties/>
+  <testcase name="start" classname="TicTacToeTest" time="0.346"/>
+  <system-out><![CDATA[?[1;31m
+Start test 1?[0m
+Enter cells: > O_OXXO_XX
+---------
+| O _ O |
+| X X O |
+| _ X X |
+---------
+?[1;31m
+Start test 2?[0m
+Enter cells: > OXO__X_OX
+---------
+| O X O |
+| _ _ X |
+| _ O X |
+---------
+?[1;31m
+Start test 3?[0m
+Enter cells: > _________
+---------
+| _ _ _ |
+| _ _ _ |
+| _ _ _ |
+---------
+?[1;31m
+Start test 4?[0m
+Enter cells: > _O__X___X
+---------
+| _ O _ |
+| _ X _ |
+| _ _ X |
+---------
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
