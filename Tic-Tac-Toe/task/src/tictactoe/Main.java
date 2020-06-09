@@ -101,18 +101,16 @@ public class Main {
         return "";
     }
 
-    public static void getGameState(char[][] gameGrid) {
+    public static String getGameState(char[][] gameGrid) {
+        String winStatus = checkWins(gameGrid);
         if (impossibleCheck(gameGrid)){
-            System.out.println("Impossible");
-            return;
-        }
-        System.out.println(checkWins(gameGrid));
-        if (checkWins(gameGrid) == "" && checkEmptyCells(gameGrid) == 0) {
-            System.out.println("Draw");
-            return;
-        } else if (checkWins(gameGrid) =="" && checkEmptyCells(gameGrid) != 0) {
-            System.out.println("Game not finished");
-            return;
+            return "Impossible";
+        } else if (winStatus != "") {
+            return winStatus;
+        } else if (checkWins(gameGrid) == "" && checkEmptyCells(gameGrid) == 0) {
+           return "Draw";
+        } else {
+            return "Game not finished";
         }
 
     }
@@ -128,7 +126,7 @@ public class Main {
         System.out.println("---------");
     }
 
-    public static void updateGameGrid(char[][] gameGrid) {
+    public static void updateGameGrid(char[][] gameGrid, int currentPlayerSymbol) {
         Scanner scanner = new Scanner(System.in);
         boolean isException = true;
         System.out.println("Enter the coordinates:");
@@ -145,31 +143,77 @@ public class Main {
         while (intX > 3 || intY > 3) {
             System.out.println("Coordinates should be from 1 to 3!");
             System.out.println("Enter the coordinates:");
-            intX = scanner.nextInt();
-            intY = scanner.nextInt();
+            inputX = scanner.next();
+            inputY = scanner.next();
+            while (!inputX.matches("[0-9]+") || !inputY.matches("[0-9]+")) {
+                System.out.println("You should enter numbers!");
+                System.out.println("Enter the coordinates:");
+                inputX = scanner.next();
+                inputY = scanner.next();
+            }
+            intX = Integer.parseInt(inputX);
+            intY = Integer.parseInt(inputY);
         }
-        while (gameGrid[3 - intY][intX - 1] !='_') {
+        while (gameGrid[3 - intY][intX - 1] != '_') {
             System.out.println("This cell is occupied! Choose another one!");
             System.out.println("Enter the coordinates:");
-            intX = scanner.nextInt();
-            intY = scanner.nextInt();
+            inputX = scanner.next();
+            inputY = scanner.next();
+            while (!inputX.matches("[0-9]+") || !inputY.matches("[0-9]+")) {
+                System.out.println("You should enter numbers!");
+                System.out.println("Enter the coordinates:");
+                inputX = scanner.next();
+                inputY = scanner.next();
+            }
+            intX = Integer.parseInt(inputX);
+            intY = Integer.parseInt(inputY);
+
+            while (intX > 3 || intY > 3) {
+                System.out.println("Coordinates should be from 1 to 3!");
+                System.out.println("Enter the coordinates:");
+                inputX = scanner.next();
+                inputY = scanner.next();
+                while (!inputX.matches("[0-9]+") || !inputY.matches("[0-9]+")) {
+                    System.out.println("You should enter numbers!");
+                    System.out.println("Enter the coordinates:");
+                    inputX = scanner.next();
+                    inputY = scanner.next();
+                }
+                intX = Integer.parseInt(inputX);
+                intY = Integer.parseInt(inputY);
+            }
+
+
         }
-        gameGrid[3 - intY][intX - 1] = 'X';
-        displayGameGrid(gameGrid);
+        if (currentPlayerSymbol == 0) {
+            gameGrid[3 - intY][intX - 1] = 'X';
+        } else {
+            gameGrid[3 - intY][intX - 1] = 'O';
+        }
+
+        //displayGameGrid(gameGrid);
 
     }
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter cells: ");
-        String userInput = scanner.nextLine();
+        String userInput = "_________";
         for (int i = 0; i < 3; ++i) {
             for (int j = 0; j < 3; ++j) {
                 gameGrid[i][j] = userInput.charAt(i * 3 + j);
             }
         }
         displayGameGrid(gameGrid);
-        updateGameGrid(gameGrid);
-        //getGameState(gameGrid);
+        String currentGameState = getGameState(gameGrid).toString();
+        //System.out.println(currentGameState);
+        int totalMoves = 0;
+        while (currentGameState.equals("Game not finished")) {
+            updateGameGrid(gameGrid,totalMoves % 2);
+            currentGameState = getGameState(gameGrid).toString();
+            //System.out.println(currentGameState);
+            displayGameGrid(gameGrid);
+            ++totalMoves;
+        }
+        System.out.println(currentGameState);
     }
 }
