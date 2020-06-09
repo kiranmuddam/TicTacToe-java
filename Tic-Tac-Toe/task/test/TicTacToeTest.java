@@ -7,6 +7,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+
+class Attach {
+    String input;
+    String result;
+
+    Attach(String result) {
+        this.result = result;
+    }
+}
+
 enum FieldState {
     X, O, FREE;
 
@@ -181,38 +191,57 @@ class TicTacToeField {
 
 }
 
-public class TicTacToeTest extends StageTest<String> {
+public class TicTacToeTest extends StageTest<Attach> {
     public TicTacToeTest() {
         super(Main.class);
     }
 
-
     @Override
-    public List<TestCase<String>> generate() {
-        List<TestCase<String>> tests = List.of(
-            new TestCase<String>()
-                .setInput("O OXXO XX"),
+    public List<TestCase<Attach>> generate() {
+        List<TestCase<Attach>> tests = List.of(
+            new TestCase<Attach>()
+                .setInput("XXXOO  O ")
+                .setAttach(new Attach("X wins")),
 
-            new TestCase<String>()
-                .setInput("OXO  X OX"),
+            new TestCase<Attach>()
+                .setInput("XOXOXOXXO")
+                .setAttach(new Attach("X wins")),
 
-            new TestCase<String>()
-                .setInput("         "),
+            new TestCase<Attach>()
+                .setInput("XOOOXOXXO")
+                .setAttach(new Attach("O wins")),
 
-            new TestCase<String>()
-                .setInput(" O  X   X")
+            new TestCase<Attach>()
+                .setInput("XOXOOXXXO")
+                .setAttach(new Attach("Draw")),
+
+            new TestCase<Attach>()
+                .setInput("XO OOX X ")
+                .setAttach(new Attach("Game not finished")),
+
+            new TestCase<Attach>()
+                .setInput("XO XO XOX")
+                .setAttach(new Attach("Impossible")),
+
+            new TestCase<Attach>()
+                .setInput(" O X  X X")
+                .setAttach(new Attach("Impossible")),
+
+            new TestCase<Attach>()
+                .setInput(" OOOO X X")
+                .setAttach(new Attach( "Impossible"))
         );
 
-        for (TestCase<String> test: tests) {
+        for (TestCase<Attach> test : tests) {
             test.setInput(test.getInput().replace(" ", "_"));
-            test.setAttach(test.getInput());
+            test.getAttach().input = test.getInput();
         }
 
         return tests;
     }
 
     @Override
-    public CheckResult check(String reply, String clue) {
+    public CheckResult check(String reply, Attach clue) {
 
         List<TicTacToeField> fields = TicTacToeField.parseAll(reply);
 
@@ -229,11 +258,40 @@ public class TicTacToeTest extends StageTest<String> {
         }
 
         TicTacToeField userField = fields.get(0);
-        TicTacToeField inputField = new TicTacToeField(clue);
+        TicTacToeField inputField = new TicTacToeField(clue.input);
 
         if (!userField.equalTo(inputField)) {
             return new CheckResult(false,
                 "Your field doesn't match expected field");
+        }
+
+        List<String> lines = reply
+            .strip()
+            .lines()
+            .map(String::strip)
+            .filter(e -> e.length() > 0)
+            .collect(Collectors.toList());
+
+        String lastLine = lines.get(lines.size() - 1);
+
+        if (! (lastLine.equals("X wins")
+            || lastLine.equals("O wins")
+            || lastLine.equals("Draw")
+            || lastLine.equals("Game not finished")
+            || lastLine.equals("Impossible")
+        )) {
+            return new CheckResult(false,
+                "Can't parse result, " +
+                    "should be one of the outcomes mentioned in description. " +
+                    "Your last line: \"" + lastLine + "\"");
+        }
+
+        if (!lastLine.equals(clue.result)) {
+            return new CheckResult(false,
+                "The result is incorrect. " +
+                    "Should be: \"" + clue.result + "\", " +
+                    "found: \"" + lastLine + "\". " +
+                    "Check if your program works correctly in test examples in description.");
         }
 
         return CheckResult.correct();
