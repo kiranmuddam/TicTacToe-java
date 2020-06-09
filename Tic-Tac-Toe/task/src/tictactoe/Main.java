@@ -1,6 +1,7 @@
 package tictactoe;
 import java.util.Scanner;
 public class Main {
+    static char[][] gameGrid = new char[3][3];
     public static boolean impossibleCheck(char[][] gameGrid) {
         boolean isXWon = false;
         boolean isYWon = false;
@@ -115,17 +116,7 @@ public class Main {
         }
 
     }
-
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter cells: ");
-        String userInput = scanner.nextLine();
-        char[][] gameGrid = new char[3][3];
-        for (int i = 0; i < 3; ++i) {
-            for (int j = 0; j < 3; ++j) {
-                gameGrid[i][j] = userInput.charAt(i * 3 + j);
-            }
-        }
+    public static void displayGameGrid(char[][] gameGrid) {
         System.out.println("---------");
         for (int i = 0; i < 3; ++i) {
             System.out.print("| ");
@@ -135,6 +126,50 @@ public class Main {
             System.out.println("|");
         }
         System.out.println("---------");
-        getGameState(gameGrid);
+    }
+
+    public static void updateGameGrid(char[][] gameGrid) {
+        Scanner scanner = new Scanner(System.in);
+        boolean isException = true;
+        System.out.println("Enter the coordinates:");
+        String inputX = scanner.next();
+        String inputY = scanner.next();
+        while (!inputX.matches("[0-9]+") || !inputY.matches("[0-9]+")) {
+            System.out.println("You should enter numbers!");
+            System.out.println("Enter the coordinates:");
+            inputX = scanner.next();
+            inputY = scanner.next();
+        }
+        int intX = Integer.parseInt(inputX);
+        int intY = Integer.parseInt(inputY);
+        while (intX > 3 || intY > 3) {
+            System.out.println("Coordinates should be from 1 to 3!");
+            System.out.println("Enter the coordinates:");
+            intX = scanner.nextInt();
+            intY = scanner.nextInt();
+        }
+        while (gameGrid[3 - intY][intX - 1] !='_') {
+            System.out.println("This cell is occupied! Choose another one!");
+            System.out.println("Enter the coordinates:");
+            intX = scanner.nextInt();
+            intY = scanner.nextInt();
+        }
+        gameGrid[3 - intY][intX - 1] = 'X';
+        displayGameGrid(gameGrid);
+
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter cells: ");
+        String userInput = scanner.nextLine();
+        for (int i = 0; i < 3; ++i) {
+            for (int j = 0; j < 3; ++j) {
+                gameGrid[i][j] = userInput.charAt(i * 3 + j);
+            }
+        }
+        displayGameGrid(gameGrid);
+        updateGameGrid(gameGrid);
+        //getGameState(gameGrid);
     }
 }

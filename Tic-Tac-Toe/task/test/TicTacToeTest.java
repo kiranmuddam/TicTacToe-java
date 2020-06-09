@@ -7,16 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
-class Attach {
-    String input;
-    String result;
-
-    Attach(String result) {
-        this.result = result;
-    }
-}
-
 enum FieldState {
     X, O, FREE;
 
@@ -81,23 +71,6 @@ class TicTacToeField {
             }
         }
         return improved;
-    }
-
-    boolean differByOne(TicTacToeField other) {
-        boolean haveSingleDifference = false;
-
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                if (field[i][j] != other.field[i][j]) {
-                    if (haveSingleDifference) {
-                        return false;
-                    }
-                    haveSingleDifference = true;
-                }
-            }
-        }
-
-        return haveSingleDifference;
     }
 
     boolean isCloseTo(TicTacToeField other) {
@@ -191,107 +164,118 @@ class TicTacToeField {
 
 }
 
-public class TicTacToeTest extends StageTest<Attach> {
+
+class Clue {
+    int x, y;
+    String input;
+    Clue(String input, int x, int y) {
+        this.input = input;
+        this.x = x;
+        this.y = y;
+    }
+}
+
+public class TicTacToeTest extends StageTest<Clue> {
     public TicTacToeTest() {
         super(Main.class);
     }
 
+    static final String[] inputs = new String[] {
+        "1 1", "1 2", "1 3",
+        "2 1", "2 2", "2 3",
+        "3 1", "3 2", "3 3"
+    };
+
+    String iterateCells(String initial) {
+        int index = -1;
+        for (int i = 0; i < inputs.length; i++) {
+            if (initial.equals(inputs[i])) {
+                index = i;
+                break;
+            }
+        }
+        if (index == -1) {
+            return "";
+        }
+        String fullInput = "";
+        for (int i = index; i < index + 9; i++) {
+            fullInput += inputs[i % inputs.length] + "\n";
+        }
+        return fullInput;
+    }
+
     @Override
-    public List<TestCase<Attach>> generate() {
-        List<TestCase<Attach>> tests = List.of(
-            new TestCase<Attach>()
-                .setInput("XXXOO  O ")
-                .setAttach(new Attach("X wins")),
+    public List<TestCase<Clue>> generate() {
 
-            new TestCase<Attach>()
-                .setInput("XOXOXOXXO")
-                .setAttach(new Attach("X wins")),
+        List<TestCase<Clue>> tests = new ArrayList<>();
 
-            new TestCase<Attach>()
-                .setInput("XOOOXOXXO")
-                .setAttach(new Attach("O wins")),
+        int i = 0;
 
-            new TestCase<Attach>()
-                .setInput("XOXOOXXXO")
-                .setAttach(new Attach("Draw")),
+        for (String startField : new String[] {
+            "_XXOO_OX_",
+            "_________",
+            "X_X_O____"
+        }) {
 
-            new TestCase<Attach>()
-                .setInput("XO OOX X ")
-                .setAttach(new Attach("Game not finished")),
+            for (String input : inputs) {
+                String fullInput = iterateCells(input);
 
-            new TestCase<Attach>()
-                .setInput("XO XO XOX")
-                .setAttach(new Attach("Impossible")),
+                String[] strNums = input.split("\\s+");
+                int x = Integer.parseInt(strNums[0]);
+                int y = Integer.parseInt(strNums[1]);
 
-            new TestCase<Attach>()
-                .setInput(" O X  X X")
-                .setAttach(new Attach("Impossible")),
+                if (i % 2 == 1) {
+                    // mix with incorrect data
+                    fullInput = "4 " + i + "\n" + fullInput;
+                }
 
-            new TestCase<Attach>()
-                .setInput(" OOOO X X")
-                .setAttach(new Attach( "Impossible"))
-        );
+                tests.add(new TestCase<Clue>()
+                    .setInput(startField + "\n" + fullInput)
+                    .setAttach(new Clue(startField, x, y)));
 
-        for (TestCase<Attach> test : tests) {
-            test.setInput(test.getInput().replace(" ", "_"));
-            test.getAttach().input = test.getInput();
+                i++;
+            }
+
         }
 
         return tests;
     }
 
     @Override
-    public CheckResult check(String reply, Attach clue) {
+    public CheckResult check(String reply, Clue clue) {
 
         List<TicTacToeField> fields = TicTacToeField.parseAll(reply);
 
-        if (fields.size() == 0) {
+        if (fields.size() != 2) {
             return new CheckResult(false,
-                "Can't parse the field! " +
-                    "Check if you output a field in format like in the example.");
+                "Can't find two fields inside output");
         }
 
-        if (fields.size() > 1) {
-            return new CheckResult(false,
-                "There are more than one field in the output! " +
-                    "You should output a single field.");
+        TicTacToeField curr = fields.get(0);
+        TicTacToeField next = fields.get(1);
+
+        TicTacToeField correctCurr = new TicTacToeField(clue.input);
+        TicTacToeField correctNext = new TicTacToeField(correctCurr.field);
+
+        String[] numInputs = iterateCells(clue.x + " " + clue.y).split("\n");
+        for (String input : numInputs) {
+            String[] strNums = input.split(" ");
+            int x = Integer.parseInt(strNums[0]);
+            int y = Integer.parseInt(strNums[1]);
+            if (correctNext.field[y - 1][x - 1] == FieldState.FREE) {
+                correctNext.field[y - 1][x - 1] = FieldState.X;
+                break;
+            }
         }
 
-        TicTacToeField userField = fields.get(0);
-        TicTacToeField inputField = new TicTacToeField(clue.input);
-
-        if (!userField.equalTo(inputField)) {
+        if (!curr.equalTo(correctCurr)) {
             return new CheckResult(false,
-                "Your field doesn't match expected field");
+                "The first field is not equal to the input field");
         }
 
-        List<String> lines = reply
-            .strip()
-            .lines()
-            .map(String::strip)
-            .filter(e -> e.length() > 0)
-            .collect(Collectors.toList());
-
-        String lastLine = lines.get(lines.size() - 1);
-
-        if (! (lastLine.equals("X wins")
-            || lastLine.equals("O wins")
-            || lastLine.equals("Draw")
-            || lastLine.equals("Game not finished")
-            || lastLine.equals("Impossible")
-        )) {
+        if (!next.equalTo(correctNext)) {
             return new CheckResult(false,
-                "Can't parse result, " +
-                    "should be one of the outcomes mentioned in description. " +
-                    "Your last line: \"" + lastLine + "\"");
-        }
-
-        if (!lastLine.equals(clue.result)) {
-            return new CheckResult(false,
-                "The result is incorrect. " +
-                    "Should be: \"" + clue.result + "\", " +
-                    "found: \"" + lastLine + "\". " +
-                    "Check if your program works correctly in test examples in description.");
+                "The first field is correct, but the second is not");
         }
 
         return CheckResult.correct();
